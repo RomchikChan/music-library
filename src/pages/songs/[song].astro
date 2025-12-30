@@ -1,0 +1,91 @@
+---
+export async function getStaticPaths() {
+  const songs = await Astro.glob('../../content/songs/*.md');
+  
+  return songs.map(song => ({
+    params: { 
+      song: song.frontmatter.title
+        .toLowerCase()
+        .replace(/[^a-zа-я0-9]/g, '-')  // Заменяем пробелы и спецсимволы на дефисы
+    },
+    props: { song: song.frontmatter }
+  }));
+}
+
+const { song } = Astro.props;
+---
+
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width" />
+  <title>{song.title} - Выбор инструмента</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+    .container { max-width: 800px; margin: 0 auto; }
+    header { background: white; padding: 30px; border-radius: 10px; margin-bottom: 30px; text-align: center; }
+    h1 { color: #2c3e50; }
+    .instrument-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px; }
+    .instrument-card { background: white; padding: 25px; border-radius: 10px; text-align: center; box-shadow: 0 3px 10px rgba(0,0,0,0.1); }
+    .instrument-card h3 { margin-bottom: 15px; color: #34495e; }
+    .btn { display: inline-block; padding: 12px 25px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; margin: 5px; }
+    .btn:hover { background: #2980b9; }
+    .btn-secondary { background: #95a5a6; }
+    .btn-secondary:hover { background: #7f8c8d; }
+    .back-link { display: inline-block; margin-top: 20px; color: #3498db; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎵 {song.title}</h1>
+      {song.artist && <p><strong>Исполнитель:</strong> {song.artist}</p>}
+      <p>Выберите инструмент для разбора</p>
+    </header>
+
+    <div class="instrument-grid">
+      <!-- Бас-гитара -->
+      {song.bass?.songsterr && (
+        <div class="instrument-card">
+          <h3>🎸 Бас-гитара</h3>
+          <a href={`${Astro.url.pathname}/bass`} class="btn">Открыть разбор</a>
+        </div>
+      )}
+
+      <!-- Ритм-гитара -->
+      {song.guitar_rhythm?.songsterr && (
+        <div class="instrument-card">
+          <h3>🎸 Ритм-гитара</h3>
+          <a href={`${Astro.url.pathname}/rhythm`} class="btn">Открыть разбор</a>
+        </div>
+      )}
+
+      <!-- Соло-гитара -->
+      {song.guitar_solo?.songsterr && (
+        <div class="instrument-card">
+          <h3>🎸 Соло-гитара</h3>
+          <a href={`${Astro.url.pathname}/solo`} class="btn">Открыть разбор</a>
+        </div>
+      )}
+
+      <!-- Ударные -->
+      {song.drums?.songsterr && (
+        <div class="instrument-card">
+          <h3>🥁 Ударные</h3>
+          <a href={`${Astro.url.pathname}/drums`} class="btn">Открыть разбор</a>
+        </div>
+      )}
+
+      <!-- Текст -->
+      {song.lyrics && (
+        <div class="instrument-card">
+          <h3>📝 Текст песни</h3>
+          <a href={`${Astro.url.pathname}/lyrics`} class="btn">Открыть текст</a>
+        </div>
+      )}
+    </div>
+
+    <a href="/" class="back-link">← Назад к списку песен</a>
+  </div>
+</body>
+</html>

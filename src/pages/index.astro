@@ -1,0 +1,64 @@
+---
+// Получаем все песни
+const songs = await Astro.glob('../content/songs/*.md');
+---
+
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Библиотека песен для группы</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+      .container { max-width: 1200px; margin: 0 auto; }
+      header { text-align: center; margin-bottom: 40px; padding: 20px; background: white; border-radius: 10px; }
+      h1 { color: #333; margin-bottom: 10px; }
+      .song-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+      .song-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+      .song-card h3 { color: #2c3e50; margin-bottom: 10px; }
+      .song-card p { color: #666; margin-bottom: 5px; }
+      .btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #3498db; color: white; text-decoration: none; border-radius: 5px; }
+      .btn:hover { background: #2980b9; }
+      .admin-link { position: fixed; top: 20px; right: 20px; background: #2ecc71; color: white; padding: 10px 15px; border-radius: 5px; text-decoration: none; }
+    </style>
+  </head>
+  <body>
+    <a href="/admin" class="admin-link">⚙️ Админка</a>
+    
+    <div class="container">
+      <header>
+        <h1>🎵 Библиотека песен</h1>
+        <p>Выберите песню для разбора по инструментам</p>
+      </header>
+
+      <div class="song-grid">
+        {songs.map(song => (
+          <div class="song-card">
+            <h3>{song.frontmatter.title}</h3>
+            {song.frontmatter.artist && <p><strong>Исполнитель:</strong> {song.frontmatter.artist}</p>}
+            <p><strong>Доступно:</strong></p>
+            <ul>
+              {song.frontmatter.bass?.songsterr && <li>🎸 Бас-гитара</li>}
+              {song.frontmatter.guitar_rhythm?.songsterr && <li>🎸 Ритм-гитара</li>}
+              {song.frontmatter.guitar_solo?.songsterr && <li>🎸 Соло-гитара</li>}
+              {song.frontmatter.drums?.songsterr && <li>🥁 Ударные</li>}
+              {song.frontmatter.lyrics && <li>📝 Текст</li>}
+            </ul>
+            <a href={`/songs/${song.frontmatter.title.toLowerCase().replace(/ /g, '-')}`} class="btn">
+              Выбрать инструменты →
+            </a>
+          </div>
+        ))}
+        
+        {songs.length === 0 && (
+          <div class="song-card">
+            <h3>Пока нет песен</h3>
+            <p>Добавьте первую песню через админку!</p>
+            <a href="/admin" class="btn">➕ Добавить песню</a>
+          </div>
+        )}
+      </div>
+    </div>
+  </body>
+</html>
