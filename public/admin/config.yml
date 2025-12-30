@@ -1,13 +1,15 @@
 backend:
   name: github
-  repo: romchikchan/music-library
+  repo: romchikchan/music-library  # ← Ваш репозиторий
   branch: main
+  site_domain: romchikchan.github.io
+  base_url: https://romchikchan.github.io
+  auth_endpoint: api/auth
 
-# Для локальной разработки:
-local_backend: true
+# УДАЛИТЬ ЭТУ СТРОКУ: local_backend: true
 
 media_folder: "public/uploads"
-public_folder: "/uploads"
+public_folder: "/music-library/uploads"
 
 collections:
   - name: "songs"
